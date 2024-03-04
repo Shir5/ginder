@@ -5,6 +5,7 @@ import MainBtn from "../components/ui/MainBtn"
 import MainParagraph from "../components/ui/MainParagraph";
 import { useState } from "react";
 import LoginModal from "../components/LoginModal";
+import SigninModal from "@/components/SigninModal";
 
 export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -15,6 +16,16 @@ export default function Home() {
 
   const closeLoginModal = () => {
     setShowLoginModal(false);
+  };
+
+  const [showSigninModal, setShowSigninModal] = useState(false);
+
+  const openSigninModal = () => {
+    setShowSigninModal(true);
+  };
+
+  const closeSigninModal = () => {
+    setShowSigninModal(false);
   };
 
   return (
@@ -29,7 +40,8 @@ export default function Home() {
             <MainBtn name={"LOG IN"} fontSize="2xl" padding="py-4 px-16" delay={1500} playAnimation={true} openClick={openLoginModal} />
             {showLoginModal && <LoginModal show={showLoginModal} onClose={closeLoginModal} />}
             <div className="flex-grow"></div>
-            <MainBtn name={"SIGN IN"} fontSize="2xl" padding="py-4 px-16" delay={1700} playAnimation={true} />
+            <MainBtn name={"SIGN IN"} fontSize="2xl" padding="py-4 px-16" delay={1700} playAnimation={true} openClick = {openSigninModal}/>
+            {showSigninModal && <SigninModal show={showSigninModal} onClose={closeSigninModal} />}
           </div>
         </div>
         <BackgroundBeams />
