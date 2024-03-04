@@ -1,7 +1,7 @@
 // LoginModal.tsx
 import React, { useState } from 'react';
-import Input from '../components/ui/Input';
-import ModalButton from '../components/ui/ModalButton';
+import Input from './ui/Input';
+import ModalButton from './ui/ModalButton';
 
 interface LoginModalProps {
     show: boolean;

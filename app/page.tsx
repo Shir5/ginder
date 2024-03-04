@@ -40,7 +40,7 @@ export default function Home() {
             <MainBtn name={"LOG IN"} fontSize="2xl" padding="py-4 px-16" delay={1500} playAnimation={true} openClick={openLoginModal} />
             {showLoginModal && <LoginModal show={showLoginModal} onClose={closeLoginModal} />}
             <div className="flex-grow"></div>
-            <MainBtn name={"SIGN IN"} fontSize="2xl" padding="py-4 px-16" delay={1700} playAnimation={true} openClick = {openSigninModal}/>
+            <MainBtn name={"SIGN IN"} fontSize="2xl" padding="py-4 px-16" delay={1700} playAnimation={true} openClick={openSigninModal} />
             {showSigninModal && <SigninModal show={showSigninModal} onClose={closeSigninModal} />}
           </div>
         </div>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Input from '../components/ui/Input';
 import ModalButton from '../components/ui/ModalButton';
+import SearchBar from './ui/SearchBar';
 
 
 interface SigninModalProps {
@@ -15,6 +16,11 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
         const [password, setPassword] = useState('');
         const [description, setDescription] = useState('');
 
+        const tagsDatabase = [
+            { id: 1, name: 'Dota 2' },
+            { id: 2, name: 'CS2' },
+            { id: 3, name: 'Overwatch 2' },
+        ];
 
         const handleSignin = () => {
             console.log('Signing in with:', email, password);
@@ -25,7 +31,7 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                 }`}
             >
                 <div className="bg-white p-6 rounded-lg shadow-md w-96">
-                    <h2 className="text-xl font-bold mb-4">Login</h2>
+                    <h2 className="text-xl font-bold mb-4">Sign In</h2>
                     <form>
                         <Input
                             id="email"
@@ -51,12 +57,14 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                             value={description}
                             onChange={setDescription}
                         />
+                        <SearchBar tagsDatabase={tagsDatabase} label='Games' />
+
                         <div className="flex justify-start">
                             <ModalButton
                                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
                                 onClick={handleSignin}
                             >
-                                Login
+                                Sign In
                             </ModalButton>
                             <ModalButton
                                 className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"

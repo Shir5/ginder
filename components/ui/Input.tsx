@@ -22,6 +22,7 @@ const Input: React.FC<InputProps> = ({ id, type, label, placeholder, value, onCh
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
+                required
             />
         </div>
     );
