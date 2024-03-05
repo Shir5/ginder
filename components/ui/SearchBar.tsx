@@ -8,9 +8,10 @@ interface Tag {
 interface Props {
     tagsDatabase: Tag[];
     label?: string;
+    onTagsSelected: (selectedTags: Tag[]) => void; // Callback to pass selected tags to parent
 }
 
-const SearchBar: React.FC<Props> = ({ tagsDatabase, label }) => {
+const SearchBar: React.FC<Props> = ({ tagsDatabase, label, onTagsSelected }) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
@@ -19,14 +20,18 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label }) => {
     };
 
     const selectTag = (tag: Tag) => {
-        if (!selectedTags.includes(tag)) {
+        if (!selectedTags.some(selectedTag => selectedTag.id === tag.id)) {
             setSelectedTags([...selectedTags, tag]);
+            // Call the callback to pass selected tags to the parent component
+            onTagsSelected([...selectedTags, tag]);
         }
     };
 
     const removeTag = (tagId: number) => {
         const updatedTags = selectedTags.filter(tag => tag.id !== tagId);
         setSelectedTags(updatedTags);
+        // Call the callback to pass selected tags to the parent component
+        onTagsSelected(updatedTags);
     };
 
     const filteredTags = searchQuery

@@ -24,7 +24,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
         >
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
                 <h2 className="text-xl font-bold mb-4">Login</h2>
-                <form>
+                <form >
                     <Input
                         id="email"
                         type="email"
@@ -43,10 +43,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                     />
                     <div className="flex justify-start">
                         <ModalButton
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
                             onClick={handleLogin}
                         >
-                            SignIn
+                            Sign In
                         </ModalButton>
                         <ModalButton
                             className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
