@@ -11,8 +11,10 @@ datasource db {
 model User {
   id           Int      @id @default(autoincrement())
   username     String   @unique
-  email        String
+  email        String   @unique
   password     String
   description  String
   selectedTags String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

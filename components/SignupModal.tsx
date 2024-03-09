@@ -1,88 +1,92 @@
 import React, { useState } from 'react';
-import Input from '../components/ui/Input';
-import ModalButton from '../components/ui/ModalButton';
+import Input from './ui/Input';
+import ModalButton from './ui/ModalButton';
 import SearchBar from './ui/SearchBar';
 import { tagsDatabase } from '@/utils/tagsDataBase';
-
-interface SigninModalProps {
+import { signup } from '@/actions/signup';
+import { Tag } from './ui/SearchBar';
+interface SignupModalProps {
     show: boolean;
     onClose: () => void;
 }
-interface Tag {
-    id: number;
-    name: string;
-}
 
-const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
+
+
+const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
+    let selectedTags: Tag[] = [];
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [description, setDescription] = useState('');
-    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [usernameError, setUsernameError] = useState('');
 
-    const handleSignin = async () => {
+    const handleTagsSelected = (tags: Tag[]): void => {
+        // Assign the value of tags to selectedTags
+        tags.sort((a, b) => a.id - b.id);
+        selectedTags = tags;
+    };
+
+
+    const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        console.log('Form submitted');
+
         // Reset errors
         setEmailError('');
         setPasswordError('');
         setUsernameError('');
 
-        // Username validation
-        if (!username) {
-            setUsernameError('Please enter a username.');
-            return;
-        }
-        // Email validation
+        // Extract form data
+        const formData = new FormData(event.currentTarget);
+        const username = formData.get('username') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        // Extract selected tags and convert them to the desired format
+
+
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailPattern.test(email)) {
             setEmailError('Please enter a valid email address.');
             return;
         }
 
-        // Password validation
         if (!password || password.length < 6) {
             setPasswordError('Password must be at least 6 characters.');
             return;
         }
-
-        // If everything is valid, proceed with signin
         try {
-            // Make a POST request to your API endpoint using fetch
-            const response = await fetch('/api/signin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,
-                    description,
-                    selectedTags // Ensure selectedTags is an array of tag IDs
-                }),
-            });
+            // Append selected tags to form data
+            formData.append('selectedTags', JSON.stringify(selectedTags));
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Response from API:', data);
-                onClose(); // Close the modal on successful signin
-            } else {
-                const errorData = await response.json();
-                console.error('Error signing in:', errorData);
-            }
+            // Call the signup action
+            await signup(formData);
+
+            // Clear form fields upon successful submission
+            setUsername('');
+            setEmail('');
+            setPassword('');
+            setDescription('');
+
+            // Optionally, close the modal upon successful submission
+            onClose();
         } catch (error) {
-            console.error('Error signing in:', error);
-        } onClose();
+            console.error('Error creating user:', error);
+            // Handle error appropriately, such as displaying an error message to the user
+        }
     };
+
 
     return (
         <div className={`fixed top-0 left-0 z-20 w-full h-full bg-black bg-opacity-50 flex justify-center items-center ${show ? '' : 'hidden'}`}>
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
                 <h2 className="text-xl font-bold mb-4">Sign In</h2>
-                <form>
+                <form onSubmit={handleSignup}>
                     <Input
+                        name={"username"}
                         id="username"
                         type="input"
                         label="User Name"
@@ -92,6 +96,7 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                     />
                     {usernameError && <div className="text-red-500 mt-1">{usernameError}</div>}
                     <Input
+                        name="email"
                         id="email"
                         type="email"
                         label="Email Address"
@@ -101,6 +106,7 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                     />
                     {emailError && <div className="text-red-500 mt-1">{emailError}</div>}
                     <Input
+                        name="password"
                         id="password"
                         type="password"
                         label="Password"
@@ -111,6 +117,7 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                     {passwordError && <div className="text-red-500 mt-1">{passwordError}</div>}
 
                     <Input
+                        name="description"
                         id="description"
                         type="input"
                         label="Description"
@@ -119,21 +126,23 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
                         onChange={setDescription}
                     />
                     <SearchBar
+                        name='selectedTags'
                         tagsDatabase={tagsDatabase}
                         label='Games'
-                        onTagsSelected={setSelectedTags} // Pass a callback to set selected tags
+                        onTagsSelected={handleTagsSelected}
                     />
 
                     <div className="flex justify-start">
                         <ModalButton
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
-                            onClick={handleSignin}
+                            btnType='submit'
                         >
-                            Sign In
+                            Sign Up
                         </ModalButton>
                         <ModalButton
                             className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
                             onClick={onClose}
+                            btnType='button'
                         >
                             Close
                         </ModalButton>
@@ -144,4 +153,4 @@ const SigninModal: React.FC<SigninModalProps> = ({ show, onClose }) => {
     );
 };
 
-export default SigninModal;
+export default SignupModal;

@@ -1,17 +1,20 @@
+// SearchBar.tsx
+
 import React, { useState } from 'react';
 
-interface Tag {
+export interface Tag {
     id: number;
     name: string;
 }
 
 interface Props {
+    name: string;
     tagsDatabase: Tag[];
     label?: string;
-    onTagsSelected: (selectedTags: Tag[]) => void; // Callback to pass selected tags to parent
+    onTagsSelected: (selectedTags: Tag[]) => void; // Define the onTagsSelected callback
 }
 
-const SearchBar: React.FC<Props> = ({ tagsDatabase, label, onTagsSelected }) => {
+const SearchBar: React.FC<Props> = ({ tagsDatabase, label, name, onTagsSelected }) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
@@ -20,24 +23,19 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label, onTagsSelected }) => 
     };
 
     const selectTag = (tag: Tag) => {
-        if (!selectedTags.some(selectedTag => selectedTag.id === tag.id)) {
-            setSelectedTags([...selectedTags, tag]);
-            // Call the callback to pass selected tags to the parent component
-            onTagsSelected([...selectedTags, tag]);
+        const isTagSelected = selectedTags.some(selectedTag => selectedTag.id === tag.id);
+        if (!isTagSelected) {
+            setSelectedTags(prevTags => [...prevTags, tag]);
+            onTagsSelected([...selectedTags, tag]); // Update selected tags when a tag is selected
         }
     };
 
     const removeTag = (tagId: number) => {
-        const updatedTags = selectedTags.filter(tag => tag.id !== tagId);
-        setSelectedTags(updatedTags);
-        // Call the callback to pass selected tags to the parent component
-        onTagsSelected(updatedTags);
+        setSelectedTags(prevTags => prevTags.filter(tag => tag.id !== tagId));
     };
 
     const filteredTags = searchQuery
-        ? tagsDatabase.filter(tag =>
-            tag.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        ? tagsDatabase.filter(tag => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
         : [];
 
     return (
@@ -57,18 +55,14 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label, onTagsSelected }) => 
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
                 ))}
             </div>
             <input
+                name={name}
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
@@ -80,7 +74,7 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label, onTagsSelected }) => 
                     <div
                         key={tag.id}
                         onClick={() => selectTag(tag)}
-                        className="cursor-pointer bg-indigo-200 px-3 py-2 mb-2 mr-2  rounded-lg hover:bg-indigo-300"
+                        className="cursor-pointer bg-indigo-200 px-3 py-2 mb-2 mr-2 rounded-lg hover:bg-indigo-300"
                     >
                         {tag.name}
                     </div>
