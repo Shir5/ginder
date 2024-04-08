@@ -6,7 +6,7 @@ export interface Tag {
     id: number;
     name: string;
 }
-
+    
 interface Props {
     name: string;
     tagsDatabase: Tag[];
@@ -25,8 +25,9 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label, name, onTagsSelected 
     const selectTag = (tag: Tag) => {
         const isTagSelected = selectedTags.some(selectedTag => selectedTag.id === tag.id);
         if (!isTagSelected) {
-            setSelectedTags(prevTags => [...prevTags, tag]);
-            onTagsSelected([...selectedTags, tag]); // Update selected tags when a tag is selected
+            const updatedTags = [...selectedTags, tag]; // Update selected tags
+            setSelectedTags(updatedTags);
+            onTagsSelected(updatedTags); // Pass the updated tags to the callback
         }
     };
 

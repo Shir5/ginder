@@ -11,10 +11,17 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<string>(''); // State for error message
 
     const handleLogin = () => {
-        console.log('Logging in with:', email, password);
-        onClose();
+        // Perform login logic here
+        // For demonstration, assume login fails if email or password is empty
+        if (!email || !password) {
+            setError('Please enter both email and password.');
+        } else {
+            // Successful login
+            onClose();
+        }
     };
 
     return (
@@ -24,8 +31,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
         >
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
                 <h2 className="text-xl font-bold mb-4">Login</h2>
-                <form >
+                <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
                     <Input
+                        name='email-input'
                         id="email"
                         type="email"
                         label="Email Address"
@@ -34,6 +42,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                         onChange={setEmail}
                     />
                     <Input
+                        name='password-input'
                         id="password"
                         type="password"
                         label="Password"
@@ -41,16 +50,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                         value={password}
                         onChange={setPassword}
                     />
+                    {error && <div className="text-red-500 mt-1">{error}</div>} {/* Render error message if present */}
+
                     <div className="flex justify-start">
                         <ModalButton
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
                             onClick={handleLogin}
+                            btnType='submit'
                         >
                             Sign In
                         </ModalButton>
                         <ModalButton
                             className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
                             onClick={onClose}
+                            btnType='button'
                         >
                             Close
                         </ModalButton>

@@ -1,8 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+'use server';
+import { PrismaClient, Tag } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-export const signup = async (formData: FormData) => {
+export const signup = async (formData: FormData, selectedTags: Tag[]) => {
     try {
         // Extract form fields from formData
         const username = formData.get('username') as string;
@@ -10,17 +12,18 @@ export const signup = async (formData: FormData) => {
         const password = formData.get('password') as string;
         const description = formData.get('description') as string;
 
-        // Extract selected tags from formData and parse them
-        const selectedTags = formData.get('selectedTags') as unknown as string[];
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save the extracted form data to the database using Prisma
         const user = await prisma.user.create({
             data: {
                 username,
                 email,
-                password, // Note: You should encrypt the password before saving it in the database
+                password: hashedPassword, // Save hashed password
                 description,
-                selectedTags // Save the selected tags to the database
+                selectedTags: {
+                    connect: selectedTags.map(tag => ({ id: tag.id })) // Connect the user to the selected tags
+                }
             }
         });
 

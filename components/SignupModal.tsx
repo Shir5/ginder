@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import Input from './ui/Input';
 import ModalButton from './ui/ModalButton';
 import SearchBar from './ui/SearchBar';
-import { tagsDatabase } from '@/utils/tagsDataBase';
 import { signup } from '@/actions/signup';
 import { Tag } from './ui/SearchBar';
+import { tagsDatabase } from '@/utils/tagsDataBase';
+import { handleTagsSelected } from '@/actions/handleTagsSelected';
+
 interface SignupModalProps {
     show: boolean;
     onClose: () => void;
 }
 
-
-
 const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
-    let selectedTags: Tag[] = [];
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,13 +21,11 @@ const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [usernameError, setUsernameError] = useState('');
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
-    const handleTagsSelected = (tags: Tag[]): void => {
-        // Assign the value of tags to selectedTags
-        tags.sort((a, b) => a.id - b.id);
-        selectedTags = tags;
+    const handleTags = async (tags: Tag[]): Promise<void> => {
+        setSelectedTags(tags);
     };
-
 
     const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -44,26 +41,27 @@ const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
         const username = formData.get('username') as string;
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
+        const description = formData.get('description') as string;
 
-        // Extract selected tags and convert them to the desired format
-
-
+        // Validate email and password
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailPattern.test(email)) {
             setEmailError('Please enter a valid email address.');
             return;
         }
-
         if (!password || password.length < 6) {
             setPasswordError('Password must be at least 6 characters.');
             return;
         }
+
         try {
-            // Append selected tags to form data
-            formData.append('selectedTags', JSON.stringify(selectedTags));
+            // Serialize selected tags
+            const serializedTags = JSON.stringify(selectedTags);
+            // Append selected tags to formData
+            formData.append('selectedTags', serializedTags);
 
             // Call the signup action
-            await signup(formData);
+            await signup(formData, selectedTags);
 
             // Clear form fields upon successful submission
             setUsername('');
@@ -78,7 +76,6 @@ const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
             // Handle error appropriately, such as displaying an error message to the user
         }
     };
-
 
     return (
         <div className={`fixed top-0 left-0 z-20 w-full h-full bg-black bg-opacity-50 flex justify-center items-center ${show ? '' : 'hidden'}`}>
@@ -115,7 +112,6 @@ const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
                         onChange={setPassword}
                     />
                     {passwordError && <div className="text-red-500 mt-1">{passwordError}</div>}
-
                     <Input
                         name="description"
                         id="description"
@@ -129,9 +125,8 @@ const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
                         name='selectedTags'
                         tagsDatabase={tagsDatabase}
                         label='Games'
-                        onTagsSelected={handleTagsSelected}
+                        onTagsSelected={handleTags} // Pass the callback function
                     />
-
                     <div className="flex justify-start">
                         <ModalButton
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
