@@ -5,7 +5,6 @@ import SearchBar from './ui/SearchBar';
 import { signup } from '@/actions/signup';
 import { Tag } from './ui/SearchBar';
 import { tagsDatabase } from '@/utils/tagsDataBase';
-import { handleTagsSelected } from '@/actions/handleTagsSelected';
 
 interface SignupModalProps {
     show: boolean;

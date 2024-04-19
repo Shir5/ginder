@@ -13,7 +13,7 @@ export const signup = async (formData: FormData, selectedTags: Tag[]) => {
         const description = formData.get('description') as string;
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         // Save the extracted form data to the database using Prisma
         const user = await prisma.user.create({
             data: {
@@ -23,7 +23,7 @@ export const signup = async (formData: FormData, selectedTags: Tag[]) => {
                 description,
                 selectedTags: {
                     connect: selectedTags.map(tag => ({ id: tag.id })) // Connect the user to the selected tags
-                }
+                },
             }
         });
 

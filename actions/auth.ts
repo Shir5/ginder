@@ -1,39 +1,15 @@
-import bcrypt from 'bcrypt';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
+import { parseCookies } from 'nookies';
+export function authMiddleware(req: NextRequest, res: NextResponse) {
+  const { token } = parseCookies({ req });
 
-const prisma = new PrismaClient();
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
 
-interface LoginResponse {
-    success: boolean;
-    message?: string;
+  // Check if the token is valid and associated with a user in your database
+  // You can use the token to fetch the user's information from your database
+
+  // Continue with the request if the user is authenticated
+  return NextResponse.next();
 }
-
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
-    try {
-        // Find the user by email
-        const user = await prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
-
-        // If user is not found, return failure response
-        if (!user) {
-            return { success: false, message: 'User not found.' };
-        }
-
-        // Compare the provided password with the hashed password stored in the database
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        // If passwords don't match, return failure response
-        if (!passwordMatch) {
-            return { success: false, message: 'Invalid email or password.' };
-        }
-
-        // Return success response
-        return { success: true };
-    } catch (error) {
-        console.error('Login error:', error);
-        return { success: false, message: 'An unexpected error occurred. Please try again.' };
-    }
-};

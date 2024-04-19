@@ -23,4 +23,5 @@ datasource db {
     selectedTags Tag[]    @relation("UserTags")
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
+    token     String?  // Add the 'token' field here
   }

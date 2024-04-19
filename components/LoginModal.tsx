@@ -1,4 +1,3 @@
-// LoginModal.tsx
 import React, { useState } from 'react';
 import Input from './ui/Input';
 import ModalButton from './ui/ModalButton';
@@ -9,18 +8,36 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState(''); // Changed from email to identifier
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>(''); // State for error message
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         // Perform login logic here
         // For demonstration, assume login fails if email or password is empty
-        if (!email || !password) {
-            setError('Please enter both email and password.');
+        if (!identifier || !password) {
+            setError('Please enter both email/nickname and password.');
         } else {
-            // Successful login
-            onClose();
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ identifier, password }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // Successful login
+                onClose();
+            } catch (error: any) {
+                console.error('Error during login:', error.message);
+                setError(error.message || 'An error occurred during login');
+            }
         }
     };
 
@@ -33,13 +50,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                 <h2 className="text-xl font-bold mb-4">Login</h2>
                 <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
                     <Input
-                        name='email-input'
-                        id="email"
-                        type="email"
-                        label="Email Address"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={setEmail}
+                        name='identifier-input'
+                        id="identifier"
+                        type="text"
+                        label="Email Address or Nickname"
+                        placeholder="Enter your email or nickname"
+                        value={identifier}
+                        onChange={setIdentifier}
                     />
                     <Input
                         name='password-input'
@@ -55,7 +72,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                     <div className="flex justify-start">
                         <ModalButton
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
-                            onClick={handleLogin}
                             btnType='submit'
                         >
                             Sign In
