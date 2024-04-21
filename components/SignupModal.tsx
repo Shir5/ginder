@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Input from './ui/Input';
 import ModalButton from './ui/ModalButton';
 import SearchBar from './ui/SearchBar';
-import { signup } from '@/actions/signup';
+import { signup } from '@/api/signup';
 import { Tag } from './ui/SearchBar';
 import { tagsDatabase } from '@/utils/tagsDataBase';
 

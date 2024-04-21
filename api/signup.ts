@@ -1,4 +1,5 @@
 'use server';
+import { createSession } from '@/lib/session';
 import { PrismaClient, Tag } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -14,6 +15,16 @@ export const signup = async (formData: FormData, selectedTags: Tag[]) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
+        // Check if user already exists
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                email: email
+            }
+        });
+        
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
         // Save the extracted form data to the database using Prisma
         const user = await prisma.user.create({
             data: {
@@ -26,7 +37,7 @@ export const signup = async (formData: FormData, selectedTags: Tag[]) => {
                 },
             }
         });
-
+        await createSession(user.userId)
         console.log('User created:', user);
 
     } catch (error) {

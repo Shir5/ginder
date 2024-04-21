@@ -7,6 +7,7 @@ import { useState } from "react";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "@/components/SignupModal";
 export default function Home() {
+
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const openLoginModal = () => {

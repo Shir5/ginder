@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Input from './ui/Input';
 import ModalButton from './ui/ModalButton';
+import { login } from '@/api/login';
 
 interface LoginModalProps {
     show: boolean;
@@ -11,36 +12,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
     const [identifier, setIdentifier] = useState(''); // Changed from email to identifier
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>(''); // State for error message
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-    const handleLogin = async () => {
-        // Perform login logic here
-        // For demonstration, assume login fails if email or password is empty
-        if (!identifier || !password) {
-            setError('Please enter both email/nickname and password.');
-        } else {
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ identifier, password }),
-                });
+        // Clear previous error message
+        setError('');
 
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || 'Login failed');
-                }
+        try {
+            // Perform login action
+            await login(identifier, password);
 
-                // Successful login
-                onClose();
-            } catch (error: any) {
-                console.error('Error during login:', error.message);
-                setError(error.message || 'An error occurred during login');
-            }
+            // Optionally, close the modal upon successful login
+            onClose();
+            window.location.reload(); 
+        } catch (error : any) {
+            // Handle login error
+            setError(error.message || 'An error occurred during login');
         }
     };
-
     return (
         <div
             className={`fixed top-0 left-0 z-20 w-full h-full bg-black bg-opacity-50 flex justify-center items-center ${show ? '' : 'hidden'
@@ -48,7 +37,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
         >
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
                 <h2 className="text-xl font-bold mb-4">Login</h2>
-                <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                <form onSubmit={handleLogin}>
                     <Input
                         name='identifier-input'
                         id="identifier"
@@ -67,7 +56,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                         value={password}
                         onChange={setPassword}
                     />
-                    {error && <div className="text-red-500 mt-1">{error}</div>} {/* Render error message if present */}
+                    {error && <div className="text-red-500 mt-1">{error}</div>} 
 
                     <div className="flex justify-start">
                         <ModalButton
