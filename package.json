@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node -r dotenv/config ./utils/tagsDataBase.ts",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --record --key 5acf4c41-40ad-4592-940f-0f28985e6580"
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",
@@ -19,7 +20,6 @@
     "@vercel/postgres": "^0.7.2",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.0",
-    "dotenv": "^16.4.5",
     "framer-motion": "^11.0.7",
     "jose": "^5.2.4",
     "next": "14.1.0",
@@ -35,6 +35,7 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "cypress": "^13.7.0",
+    "dotenv": "^16.4.5",
     "postcss": "^8",
     "prisma": "^5.12.1",
     "tailwindcss": "^3.3.0",

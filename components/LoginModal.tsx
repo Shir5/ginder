@@ -35,7 +35,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
             className={`fixed top-0 left-0 z-20 w-full h-full bg-black bg-opacity-50 flex justify-center items-center ${show ? '' : 'hidden'
                 }`}
         >
-            <div className="bg-white p-6 rounded-lg shadow-md w-96">
+            <div className="bg-white p-6 rounded-lg shadow-md w-96" id="login-modal">
                 <h2 className="text-xl font-bold mb-4">Login</h2>
                 <form onSubmit={handleLogin}>
                     <Input
@@ -63,7 +63,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:bg-indigo-800"
                             btnType='submit'
                         >
-                            Sign In
+                            Submit
                         </ModalButton>
                         <ModalButton
                             className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
