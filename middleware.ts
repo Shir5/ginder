@@ -17,11 +17,15 @@ export default async function middleware(req: NextRequest) {
         const session = cookie ? await decrypt(cookie) : null;
 
         if (isProtectedRoute && !session?.userId) {
-            return NextResponse.redirect(new URL('/', req.nextUrl));
+            return NextResponse.redirect(new URL('/', req.nextUrl))
         }
 
-        if (isPublicRoute && session?.userId) {
-            return NextResponse.redirect(new URL('/MainPage', req.nextUrl));
+        if (
+            isPublicRoute &&
+            session?.userId &&
+            !req.nextUrl.pathname.startsWith('/MainPage')
+        ) {
+            return NextResponse.redirect(new URL('/MainPage', req.nextUrl))
         }
     } catch (error) {
         console.error('Error in middleware:', error);

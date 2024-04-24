@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Input from './ui/Input';
-import ModalButton from './ui/ModalButton';
-import SearchBar from './ui/SearchBar';
+import Input from './ui/FormComponents/Input';
+import ModalButton from './ui/FormComponents/ModalButton';
+import SearchBar from './ui/FormComponents/SearchBar';
 import { signup } from '@/api/signup';
-import { Tag } from './ui/SearchBar';
+import { Tag } from './ui/FormComponents/SearchBar';
 import { tagsDatabase } from '@/utils/tagsDataBase';
 
 interface SignupModalProps {

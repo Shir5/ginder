@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "scripts/seed.js",
     "app/api/signup"
-  ],
+, "app/MainPage"  ],
   "exclude": [
     "node_modules"
   ]

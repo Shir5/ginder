@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Input from './ui/Input';
-import ModalButton from './ui/ModalButton';
+import Input from './ui/FormComponents/Input';
+import ModalButton from './ui/FormComponents/ModalButton';
 import { login } from '@/api/login';
 
 interface LoginModalProps {

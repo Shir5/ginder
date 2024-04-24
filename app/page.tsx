@@ -1,8 +1,8 @@
 "use client"
 
-import { BackgroundBeams } from "../components/ui/background-beams";
-import MainBtn from "../components/ui/MainBtn"
-import MainParagraph from "../components/ui/MainParagraph";
+import { BackgroundBeams } from "../components/ui/InitialPageComponents/background-beams";
+import MainBtn from "../components/ui/FormComponents/MainBtn"
+import MainParagraph from "../components/ui/InitialPageComponents/MainParagraph";
 import { useState } from "react";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "@/components/SignupModal";
