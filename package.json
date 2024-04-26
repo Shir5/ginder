@@ -6,8 +6,9 @@
     "schema": "prisma/schema.prisma"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "node -r dotenv/config ./utils/tagsDataBase.ts",
