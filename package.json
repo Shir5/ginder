@@ -6,8 +6,9 @@
     "schema": "prisma/schema.prisma"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "node -r dotenv/config ./utils/tagsDataBase.ts",
@@ -15,7 +16,7 @@
     "cy:run": "cypress run --record --key 5acf4c41-40ad-4592-940f-0f28985e6580"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.13.0",
     "@types/nookies": "^2.0.3",
     "@vercel/postgres": "^0.7.2",
     "bcrypt": "^5.1.1",
@@ -33,11 +34,11 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
+    "autoprefixer": "^10.4.19",
     "cypress": "^13.7.0",
     "dotenv": "^16.4.5",
     "postcss": "^8",
-    "prisma": "^5.12.1",
+    "prisma": "^5.13.0",
     "tailwindcss": "^3.3.0",
     "typescript": "^5",
     "webpack": "^5.91.0"
