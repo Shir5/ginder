@@ -15,6 +15,7 @@ interface UserCardProps {
     onLike: () => void;
     buttonSize?: 'small' | 'medium' | 'large'; // Optional button size prop
     avatarSize?: string; // Optional avatar size prop
+    style?: React.CSSProperties; // Add the style attribute with optional chaining
 }
 
 const UserCard: React.FC<UserCardProps> = ({
@@ -26,11 +27,11 @@ const UserCard: React.FC<UserCardProps> = ({
     onReport,
     onLike,
     buttonSize,
-    avatarSize,
+    avatarSize = 'w-48 h-48',
 }) => {
     return (
-        <div className="bg-indigo-950 rounded-lg shadow-md p-6 m-4 w-3/12 h-3/6">
-            <div className="flex justify-between items-center mb-4">
+        <div className="bg-indigo-950 rounded-lg shadow-md p-6 m-4 w-65 h-3/6 absolute">
+            <div className="flex justify-between items-center mb-4 flex-col gap-4">
                 <h2 className="text-xl font-bold">{name}</h2>
                 <UserImg avatar={avatar} size={avatarSize} />
             </div>
