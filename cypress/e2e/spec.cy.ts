@@ -1,7 +1,7 @@
 
 describe('template spec', () => {
   it('passes', () => {
-    cy.visit('http://localhost:3000/')
+    cy.visit('https://ginder-rho.vercel.app/')
     cy.wait(3000); // Adjust the wait time as needed
 
   })
