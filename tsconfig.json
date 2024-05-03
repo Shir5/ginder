@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "scripts/seed.js",
-    "app/api/signup"
+    "app/api/signup",
+    "components/**/*.tsx"
 , "app/MainPage"  ],
   "exclude": [
     "node_modules"
