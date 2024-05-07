@@ -3,29 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { decrypt } from './lib/session';
 
-// Specify protected and public routes
-const protectedRoutes = ['/MainPage'];
 const publicRoutes = ['/'];
 
 export default async function middleware(req: NextRequest) {
     try {
         const path = req.nextUrl.pathname;
-        const isProtectedRoute = protectedRoutes.includes(path);
-        const isPublicRoute = publicRoutes.includes(path);
+        const sessionCookie = cookies().get('session')?.value;
 
-        const cookie = cookies().get('session')?.value;
-        const session = cookie ? await decrypt(cookie) : null;
+        const session = await decrypt(sessionCookie);
 
-        if (isProtectedRoute && !session?.userId) {
-            return NextResponse.redirect(new URL('/', req.nextUrl))
+        if (!session) {
+            // If there is no session, redirect to the login page
+            return NextResponse.redirect('/', { status: 307 });
         }
 
-        if (
-            isPublicRoute &&
-            session?.userId &&
-            !req.nextUrl.pathname.startsWith('/MainPage')
-        ) {
-            return NextResponse.redirect(new URL('/MainPage', req.nextUrl))
+        // Construct the protected route dynamically based on the user's ID
+        const protectedRoute = `/${session.userId}`;
+
+        if (path !== protectedRoute) {
+            // If it's not a protected route, redirect to the user's route
+            return NextResponse.redirect(protectedRoute, { status: 307 });
         }
     } catch (error) {
         console.error('Error in middleware:', error);

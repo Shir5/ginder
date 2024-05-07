@@ -19,7 +19,12 @@ interface User {
     token: string | null;
 }
 
-function MainPage() {
+/**
+ * Renders the main page component.
+ *
+ * @return {TSX.Element} The main page component.
+ */
+function MainPage({ params }: { params: { id: number } }) {
     const [users, setUsers] = useState<User[]>([]); // Specify the type of users
     const [likedUserIds, setLikedUserIds] = useState<number[]>([]); // Array of liked user IDs
     const [dislikedUserIds, setDislikedUserIds] = useState<number[]>([]); // Array of disliked user IDs

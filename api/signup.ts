@@ -5,6 +5,13 @@ import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+/**
+ * Function to sign up a user with the provided form data and selected tags.
+ *
+ * @param {FormData} formData - The form data containing user details.
+ * @param {Tag[]} selectedTags - The tags selected by the user.
+ * @return {Promise<void>} Promise that resolves when user signup is successful.
+ */
 export const signup = async (formData: FormData, selectedTags: Tag[]) => {
     try {
         // Extract form fields from formData

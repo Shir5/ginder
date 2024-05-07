@@ -5,6 +5,13 @@ import { encrypt, createSession } from '../lib/session'; // Import encryption an
 
 const prisma = new PrismaClient();
 
+/**
+ * Retrieves a user from the database based on the provided identifier and password, then authenticates the user.
+ *
+ * @param {string} identifier - The username or email of the user.
+ * @param {string} password - The password of the user for authentication.
+ * @return {Promise<User>} The user object if authentication is successful.
+ */
 export async function login(identifier: string, password: string) {
     try {
         // Retrieve user from the database based on the provided identifier (username or email)

@@ -9,6 +9,18 @@ interface MainBtnProps {
     openClick?: () => void;
 }
 
+/**
+ * Renders a button component with customizable properties.
+ *
+ * @param {MainBtnProps} props - The props for the MainBtn component.
+ * @param {string} props.name - The name of the button.
+ * @param {string} [props.fontSize='text-2xl'] - The font size of the button.
+ * @param {string} [props.padding='py-3 px-12'] - The padding of the button.
+ * @param {number} [props.delay=1000] - The delay for the button animation.
+ * @param {boolean} [props.playAnimation=false] - Determines if the button animation should be played.
+ * @param {() => void} [props.openClick] - The function to be called when the button is clicked.
+ * @return {TSX.Element} The rendered MainBtn component.
+ */
 function MainBtn({ name, fontSize = 'text-2xl', padding = 'py-3 px-12', delay = 1000, playAnimation = false, openClick }: MainBtnProps) {
     const [slideIn, setSlideIn] = useState(false);
 

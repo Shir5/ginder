@@ -8,6 +8,14 @@ interface LoginModalProps {
     onClose: () => void;
 }
 
+/**
+ * Renders a modal for user login.
+ *
+ * @param {LoginModalProps} props - The props for the LoginModal component.
+ * @param {boolean} props.show - Determines whether the modal is visible or not.
+ * @param {() => void} props.onClose - The function to call when the modal is closed.
+ * @return {React.ReactElement} The rendered LoginModal component.
+ */
 const LoginModal: React.FC<LoginModalProps> = ({ show, onClose }) => {
     const [identifier, setIdentifier] = useState(''); // Changed from email to identifier
     const [password, setPassword] = useState('');

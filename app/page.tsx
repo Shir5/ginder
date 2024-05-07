@@ -6,6 +6,12 @@ import MainParagraph from "../components/ui/InitialPageComponents/MainParagraph"
 import { useState } from "react";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "@/components/SignupModal";
+
+/**
+ * Renders the Home component which displays the main page of the application. With login and signup.
+ *
+ * @return {TSX.Element} The Home component.
+ */
 export default function Home() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);

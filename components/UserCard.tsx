@@ -18,6 +18,21 @@ interface UserCardProps {
     style?: React.CSSProperties; // Add the style attribute with optional chaining
 }
 
+/**
+ * Renders a user card component.
+ *
+ * @param {UserCardProps} props - The props object containing the following properties:
+ *   - name: The name of the user.
+ *   - avatar: The URL of the user's avatar image. (optional)
+ *   - description: The description of the user.
+ *   - cardTags: An array of tags associated with the user's card.
+ *   - onDislike: The function to be called when the user dislikes the card.
+ *   - onReport: The function to be called when the user reports the card.
+ *   - onLike: The function to be called when the user likes the card.
+ *   - buttonSize: The size of the buttons in the card. (optional)
+ *   - avatarSize: The size of the avatar image. (default: 'w-48 h-48')
+ * @return {TSX.Element} The rendered user card component.
+ */
 const UserCard: React.FC<UserCardProps> = ({
     name,
     avatar,

@@ -11,6 +11,12 @@ interface SignupModalProps {
     onClose: () => void;
 }
 
+/**
+ * Renders a signup modal component.
+ *
+ * @param {SignupModalProps} props - The props object containing the show and onClose properties.
+ * @return {ReactElement} The signup modal component.
+ */
 const SignupModal: React.FC<SignupModalProps> = ({ show, onClose }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');

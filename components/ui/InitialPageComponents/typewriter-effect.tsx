@@ -4,6 +4,15 @@ import { cn } from "@/utils/cn";
 import { motion, stagger, useAnimate, useInView } from "framer-motion";
 import { useEffect } from "react";
 
+/**
+ * Renders a typewriter effect with a series of words.
+ *
+ * @param {Object} props - The props object.
+ * @param {Array} props.words - An array of objects containing the text and optional class name for each word.
+ * @param {string} [props.className] - Optional class name for the container div.
+ * @param {string} [props.cursorClassName] - Optional class name for the cursor span.
+ * @return {TSX.Element} The rendered typewriter effect.
+ */
 export const TypewriterEffect = ({
     words,
     className,
@@ -43,6 +52,11 @@ export const TypewriterEffect = ({
         }
     }, [isInView]);
 
+    /**
+     * Renders the words array inside a motion div.
+     *
+     * @return {TSX.Element} The rendered words in a motion div.
+     */
     const renderWords = () => {
         return (
             <motion.div ref={scope} className="inline">
@@ -97,6 +111,15 @@ export const TypewriterEffect = ({
     );
 };
 
+/**
+ * Renders a smooth typewriter effect with a series of words.
+ *
+ * @param {Object} props - The props object.
+ * @param {Array} props.words - An array of objects containing the text and optional class name for each word.
+ * @param {string} [props.className] - Optional class name for the container div.
+ * @param {string} [props.cursorClassName] - Optional class name for the cursor span.
+ * @return {TSX.Element} The rendered smooth typewriter effect.
+ */
 export const TypewriterEffectSmooth = ({
     words,
     className,

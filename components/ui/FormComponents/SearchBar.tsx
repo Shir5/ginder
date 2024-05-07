@@ -14,14 +14,36 @@ interface Props {
     onTagsSelected: (selectedTags: Tag[]) => void; // Define the onTagsSelected callback
 }
 
+/**
+ * Renders a search bar component.
+ *
+ * @param {Props} props - The props object containing the following properties:
+ *   - tagsDatabase: An array of Tag objects representing the database of tags.
+ *   - label: The label for the search bar.
+ *   - name: The name attribute for the search bar input.
+ *   - onTagsSelected: A callback function to be called when tags are selected.
+ * @return {ReactElement} The rendered search bar component.
+ */
 const SearchBar: React.FC<Props> = ({ tagsDatabase, label, name, onTagsSelected }) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
+    /**
+     * Updates the search query state based on the input change event.
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} event - The input change event.
+     * @return {void} This function does not return anything.
+     */
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
     };
 
+    /**
+     * Selects a tag and updates the selected tags state.
+     *
+     * @param {Tag} tag - The tag to be selected.
+     * @return {void} This function does not return anything.
+     */
     const selectTag = (tag: Tag) => {
         const isTagSelected = selectedTags.some(selectedTag => selectedTag.id === tag.id);
         if (!isTagSelected) {
@@ -31,6 +53,12 @@ const SearchBar: React.FC<Props> = ({ tagsDatabase, label, name, onTagsSelected 
         }
     };
 
+    /**
+     * Removes a tag with the specified tag ID from the selected tags state.
+     *
+     * @param {number} tagId - The ID of the tag to be removed.
+     * @return {void} This function does not return anything.
+     */
     const removeTag = (tagId: number) => {
         setSelectedTags(prevTags => prevTags.filter(tag => tag.id !== tagId));
     };
