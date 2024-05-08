@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
+import MainBtn from "@/components/ui/FormComponents/MainBtn";
+import logout from "@/api/logout";
 
 // Define a type for user data
 interface User {
@@ -29,6 +31,8 @@ function MainPage({ params }: { params: { id: number } }) {
     const [likedUserIds, setLikedUserIds] = useState<number[]>([]); // Array of liked user IDs
     const [dislikedUserIds, setDislikedUserIds] = useState<number[]>([]); // Array of disliked user IDs
     const [reportedUserIds, setReportedUserIds] = useState<number[]>([]); // Array of reported user IDs
+    const userIdFromRoute = parseInt(window.location.pathname.split('/').pop() || ''); // Get the user ID from the URL`
+    let filteredUsers: User[] = [];
 
     useEffect(() => {
         // Fetch user data using the function to fetch all users
@@ -44,6 +48,15 @@ function MainPage({ params }: { params: { id: number } }) {
         fetchData();
     }, []);
 
+
+    async function handleLogout() {
+        try {
+            await logout();
+            window.location.reload();
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    }
     const handleLike = (userId: number) => {
         // Add the liked user ID to the array of liked user IDs
         setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, userId]);
@@ -58,22 +71,37 @@ function MainPage({ params }: { params: { id: number } }) {
         // Add the reported user ID to the array of reported user IDs
         setReportedUserIds(prevReportedUserIds => [...prevReportedUserIds, userId]);
     };
-
-    const filteredUsers = users.filter(user => !likedUserIds.includes(user.userId) && !dislikedUserIds.includes(user.userId) && !reportedUserIds.includes(user.userId));
+    if (userIdFromRoute) {
+        filteredUsers = users.filter(user => {
+            const userId = user.userId;
+            // Filter out if the user ID matches the ID from the route path
+            return userId !== userIdFromRoute &&
+                !likedUserIds.includes(userId) &&
+                !dislikedUserIds.includes(userId) &&
+                !reportedUserIds.includes(userId);
+        });
+    } else {
+        console.error('Invalid user ID in the route path.');
+    }
 
     return (
         <div>
             <section className="w-full h-screen bg-neutral-950 overflow-hidden justify-center items-center flex relative">
+                <button onClick={() => handleLogout()} className="absolute top-3  right-center bg-gray-800 text-white rounded-full h-20 w-20 flex items-center justify-center focus:outline-none transition-all duration-300 hover:bg-gray-600 hover:scale-110 hover:rotate-180">
+                    Logout
+                </button>
                 {filteredUsers.map((user, index) => (
                     <UserCard
                         key={user.userId}
                         name={user.username}
                         description={user.description}
                         cardTags={user.selectedTags.map(tag => tag.name)}
-                        onDislike={() => handleDislike(user.userId)} 
-                        onReport={() => handleReport(user.userId)} 
-                        onLike={() => handleLike(user.userId)} 
-                        style={{ zIndex: filteredUsers.length - index }}
+                        onDislike={() => handleDislike(user.userId)}
+                        onReport={() => handleReport(user.userId)}
+                        onLike={() => handleLike(user.userId)}
+                        style={{ zIndex: filteredUsers.length - index, 
+                            right: 1/5,
+                        }}
                     />
                 ))}
             </section>
