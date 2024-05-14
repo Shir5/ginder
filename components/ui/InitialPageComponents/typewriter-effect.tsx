@@ -11,7 +11,7 @@ import { useEffect } from "react";
  * @param {Array} props.words - An array of objects containing the text and optional class name for each word.
  * @param {string} [props.className] - Optional class name for the container div.
  * @param {string} [props.cursorClassName] - Optional class name for the cursor span.
- * @return {TSX.Element} The rendered typewriter effect.
+ * @return {JSX.Element} The rendered typewriter effect.
  */
 export const TypewriterEffect = ({
     words,
@@ -55,7 +55,7 @@ export const TypewriterEffect = ({
     /**
      * Renders the words array inside a motion div.
      *
-     * @return {TSX.Element} The rendered words in a motion div.
+     * @return {JSX.Element} The rendered words in a motion div.
      */
     const renderWords = () => {
         return (
@@ -118,7 +118,7 @@ export const TypewriterEffect = ({
  * @param {Array} props.words - An array of objects containing the text and optional class name for each word.
  * @param {string} [props.className] - Optional class name for the container div.
  * @param {string} [props.cursorClassName] - Optional class name for the cursor span.
- * @return {TSX.Element} The rendered smooth typewriter effect.
+ * @return {JSX.Element} The rendered smooth typewriter effect.
  */
 export const TypewriterEffectSmooth = ({
     words,

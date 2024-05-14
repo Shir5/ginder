@@ -19,7 +19,7 @@ interface MainBtnProps {
  * @param {number} [props.delay=1000] - The delay for the button animation.
  * @param {boolean} [props.playAnimation=false] - Determines if the button animation should be played.
  * @param {() => void} [props.openClick] - The function to be called when the button is clicked.
- * @return {TSX.Element} The rendered MainBtn component.
+ * @return {JSX.Element} The rendered MainBtn component.
  */
 function MainBtn({ name, fontSize = 'text-2xl', padding = 'py-3 px-12', delay = 1000, playAnimation = false, openClick }: MainBtnProps) {
     const [slideIn, setSlideIn] = useState(false);

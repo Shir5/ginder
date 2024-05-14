@@ -35,7 +35,7 @@
     "scripts/seed.js",
     "app/api/signup",
     "components/**/*.tsx",
-    "app/[id]"
+    "app/[id]",
   ],
   "exclude": [
     "node_modules"

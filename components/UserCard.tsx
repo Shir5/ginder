@@ -31,7 +31,7 @@ interface UserCardProps {
  *   - onLike: The function to be called when the user likes the card.
  *   - buttonSize: The size of the buttons in the card. (optional)
  *   - avatarSize: The size of the avatar image. (default: 'w-48 h-48')
- * @return {TSX.Element} The rendered user card component.
+ * @return {JSX.Element} The rendered user card component.
  */
 const UserCard: React.FC<UserCardProps> = ({
     name,

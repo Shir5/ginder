@@ -10,7 +10,7 @@ import SignupModal from "@/components/SignupModal";
 /**
  * Renders the Home component which displays the main page of the application. With login and signup.
  *
- * @return {TSX.Element} The Home component.
+ * @return {JSX.Element} The Home component.
  */
 export default function Home() {
 

@@ -9,7 +9,7 @@ interface CloseButtonProps {
  *
  * @param {Object} props - The props object containing the following properties:
  *   - onClick: A function to be called when the button is clicked.
- * @return {TSX.Element} The rendered close button component.
+ * @return {JSX.Element} The rendered close button component.
  */
 const CloseButton: React.FC<CloseButtonProps> = ({ onClick }) => {
   return (

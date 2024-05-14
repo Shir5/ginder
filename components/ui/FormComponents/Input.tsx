@@ -21,7 +21,7 @@ interface InputProps {
  * @param {string} props.value - The value of the input element.
  * @param {(value: string) => void} props.onChange - The function to be called when the input value changes.
  * @param {string} props.name - The name of the input element.
- * @return {TSX.Element} The rendered input component.
+ * @return {JSX.Element} The rendered input component.
  */
 const Input: React.FC<InputProps> = ({ id, type, label, placeholder, value, onChange,name }) => {
     return (

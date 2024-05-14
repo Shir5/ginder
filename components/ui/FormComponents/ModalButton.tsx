@@ -17,7 +17,7 @@ interface ButtonProps {
  *   - className: The CSS class name for the button.
  *   - children: The content to be displayed inside the button.
  *   - btnType: The type of button (submit, reset, or button).
- * @return {TSX.Element} The rendered button component.
+ * @return {JSX.Element} The rendered button component.
  */
 const ModalButton: React.FC<ButtonProps> = ({ onClick, className, children, btnType }) => {
     return (

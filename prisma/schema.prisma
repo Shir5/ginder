@@ -8,20 +8,33 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-  model Tag {
-    id           Int     @id @default(autoincrement())
-    name         String  @unique
-    users        User[]  @relation("UserTags")
-  }
+model Tag {
+  id           Int     @id @default(autoincrement())
+  name         String  @unique
+  users        User[]  @relation("UserTags")
+}
 
-  model User {
-    userId       Int      @id @default(autoincrement())
-    username     String   @unique
-    email        String   @unique
-    password     String
-    description  String
-    selectedTags Tag[]    @relation("UserTags")
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    token     String?  // Add the 'token' field here
-  }
+model User {
+  userId       Int         @id @default(autoincrement())
+  username     String      @unique
+  email        String      @unique
+  password     String
+  description  String
+  selectedTags Tag[]       @relation("UserTags")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  likes        Like[]      @relation("LikedUsers")
+  likedBy      Like[]      @relation("LikedByUsers")
+}
+
+model Like {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  likedUserId  Int
+  createdAt    DateTime  @default(now())
+
+  user         User      @relation("LikedUsers", fields: [userId], references: [userId])
+  likedUser    User      @relation("LikedByUsers", fields: [likedUserId], references: [userId])
+
+  @@unique([userId, likedUserId])
+}

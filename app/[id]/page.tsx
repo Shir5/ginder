@@ -4,6 +4,8 @@ import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
 import MainBtn from "@/components/ui/FormComponents/MainBtn";
 import logout from "@/api/logout";
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
 // Define a type for user data
 interface User {
@@ -18,13 +20,12 @@ interface User {
         id: number;
         name: string;
     }[];
-    token: string | null;
 }
 
 /**
  * Renders the main page component.
  *
- * @return {TSX.Element} The main page component.
+ * @return {JSX.Element} The main page component.
  */
 function MainPage({ params }: { params: { id: number } }) {
     const [users, setUsers] = useState<User[]>([]); // Specify the type of users
@@ -57,9 +58,26 @@ function MainPage({ params }: { params: { id: number } }) {
             console.error('Error logging out:', error);
         }
     }
-    const handleLike = (userId: number) => {
+    async function handleLike(userId: number, likedUserId: number) {
+
+        await prisma.like.create({
+            data: {
+                userId,
+                likedUserId,
+            },
+        });
+
+        // Create like entry for the user who was liked
+        await prisma.like.create({
+            data: {
+                userId: likedUserId,
+                likedUserId: userId,
+            },
+        });
+
+        
+
         // Add the liked user ID to the array of liked user IDs
-        setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, userId]);
     };
 
     const handleDislike = (userId: number) => {
@@ -98,9 +116,10 @@ function MainPage({ params }: { params: { id: number } }) {
                         cardTags={user.selectedTags.map(tag => tag.name)}
                         onDislike={() => handleDislike(user.userId)}
                         onReport={() => handleReport(user.userId)}
-                        onLike={() => handleLike(user.userId)}
-                        style={{ zIndex: filteredUsers.length - index, 
-                            right: 1/5,
+                        onLike={() => handleLike(userIdFromRoute, user.userId)}
+                        style={{
+                            zIndex: filteredUsers.length - index,
+                            right: 1 / 5,
                         }}
                     />
                 ))}
