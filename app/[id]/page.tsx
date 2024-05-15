@@ -1,10 +1,12 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
 import MainBtn from "@/components/ui/FormComponents/MainBtn";
 import logout from "@/api/logout";
 import { PrismaClient } from '@prisma/client'
+import like from "@/api/like";
 const prisma = new PrismaClient()
 
 // Define a type for user data
@@ -29,9 +31,18 @@ interface User {
  */
 function MainPage({ params }: { params: { id: number } }) {
     const [users, setUsers] = useState<User[]>([]); // Specify the type of users
-    const [likedUserIds, setLikedUserIds] = useState<number[]>([]); // Array of liked user IDs
-    const [dislikedUserIds, setDislikedUserIds] = useState<number[]>([]); // Array of disliked user IDs
-    const [reportedUserIds, setReportedUserIds] = useState<number[]>([]); // Array of reported user IDs
+    const [likedUserIds, setLikedUserIds] = useState<number[]>(() => {
+        const likedIds = localStorage.getItem('likedUserIds');
+        return likedIds ? JSON.parse(likedIds) : [];
+    }); // Array of liked user IDs
+    const [dislikedUserIds, setDislikedUserIds] = useState<number[]>(() => {
+        const dislikedIds = localStorage.getItem('dislikedUserIds');
+        return dislikedIds ? JSON.parse(dislikedIds) : [];
+    }); // Array of disliked user IDs
+    const [reportedUserIds, setReportedUserIds] = useState<number[]>(() => {
+        const reportedIds = localStorage.getItem('reportedUserIds');
+        return reportedIds ? JSON.parse(reportedIds) : [];
+    }); // Array of reported user IDs
     const userIdFromRoute = parseInt(window.location.pathname.split('/').pop() || ''); // Get the user ID from the URL`
     let filteredUsers: User[] = [];
 
@@ -49,6 +60,11 @@ function MainPage({ params }: { params: { id: number } }) {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem('likedUserIds', JSON.stringify(likedUserIds));
+        localStorage.setItem('dislikedUserIds', JSON.stringify(dislikedUserIds));
+        localStorage.setItem('reportedUserIds', JSON.stringify(reportedUserIds));
+    }, [likedUserIds, dislikedUserIds, reportedUserIds]);
 
     async function handleLogout() {
         try {
@@ -58,26 +74,12 @@ function MainPage({ params }: { params: { id: number } }) {
             console.error('Error logging out:', error);
         }
     }
-    async function handleLike(userId: number, likedUserId: number) {
 
-        await prisma.like.create({
-            data: {
-                userId,
-                likedUserId,
-            },
-        });
+     function handleLike(userId: number, likedUserId: number) {
 
-        // Create like entry for the user who was liked
-        await prisma.like.create({
-            data: {
-                userId: likedUserId,
-                likedUserId: userId,
-            },
-        });
-
-        
-
+         like(userId, likedUserId);
         // Add the liked user ID to the array of liked user IDs
+        setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, likedUserId]);
     };
 
     const handleDislike = (userId: number) => {
@@ -89,6 +91,7 @@ function MainPage({ params }: { params: { id: number } }) {
         // Add the reported user ID to the array of reported user IDs
         setReportedUserIds(prevReportedUserIds => [...prevReportedUserIds, userId]);
     };
+
     if (userIdFromRoute) {
         filteredUsers = users.filter(user => {
             const userId = user.userId;
@@ -100,6 +103,18 @@ function MainPage({ params }: { params: { id: number } }) {
         });
     } else {
         console.error('Invalid user ID in the route path.');
+    }
+    if (filteredUsers.length === 0 && users.length > 0) {
+        // Refetch user data to refill the card stack
+        setLikedUserIds([]);
+        setDislikedUserIds([]);
+        setReportedUserIds([]);
+        setUsers([]);
+        getAllUsers().then(userData => {
+            setUsers(userData);
+        }).catch(error => {
+            console.error("Error refetching user data:", error);
+        });
     }
 
     return (

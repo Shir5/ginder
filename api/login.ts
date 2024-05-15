@@ -1,4 +1,4 @@
-'use server';
+"use server";
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client'; // Import Prisma Client
 import { encrypt, createSession } from '../lib/session'; // Import encryption and session management functions
