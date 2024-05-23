@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Function to fetch all users from the database
-async function getAllUsers() {
+export default async function getAllUsers() {
     try {
         const users = await prisma.user.findMany({
             include: {
@@ -18,4 +18,3 @@ async function getAllUsers() {
     }
 }
 
-export default getAllUsers;

@@ -16,7 +16,7 @@
     "cy:run": "cypress run --record --key 5acf4c41-40ad-4592-940f-0f28985e6580"
   },
   "dependencies": {
-    "@prisma/client": "^5.13.0",
+    "@prisma/client": "^5.14.0",
     "@types/nookies": "^2.0.3",
     "@vercel/postgres": "^0.8.0",
     "bcrypt": "^5.1.1",

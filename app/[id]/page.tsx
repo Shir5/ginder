@@ -5,8 +5,10 @@ import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
 import MainBtn from "@/components/ui/FormComponents/MainBtn";
 import logout from "@/api/logout";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import like from "@/api/like";
+import MatchNotification from "@/components/MatchNotification";
+
 const prisma = new PrismaClient()
 
 // Define a type for user data
@@ -43,6 +45,11 @@ function MainPage({ params }: { params: { id: number } }) {
         const reportedIds = localStorage.getItem('reportedUserIds');
         return reportedIds ? JSON.parse(reportedIds) : [];
     }); // Array of reported user IDs
+
+    const [showMatchNotification, setShowMatchNotification] = useState(false);
+    const [matchedUser1, setMatchedUser1] = useState('');
+    const [matchedUser2, setMatchedUser2] = useState('');
+
     const userIdFromRoute = parseInt(window.location.pathname.split('/').pop() || ''); // Get the user ID from the URL`
     let filteredUsers: User[] = [];
 
@@ -75,12 +82,24 @@ function MainPage({ params }: { params: { id: number } }) {
         }
     }
 
-     function handleLike(userId: number, likedUserId: number) {
-
-         like(userId, likedUserId);
-        // Add the liked user ID to the array of liked user IDs
-        setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, likedUserId]);
-    };
+    async function handleLike(userId: number, likedUserId: number) {
+        try {
+            const likeValue = await like(userId, likedUserId);
+            if (likeValue) {
+                // Show match notification
+                const likedUser = users.find(user => user.userId === likedUserId);
+                if (likedUser) {
+                    setMatchedUser1(users.find(user => user.userId === userId)?.username || '');
+                    setMatchedUser2(likedUser.username);
+                    setShowMatchNotification(true);
+                }
+            }
+            // Add the liked user ID to the array of liked user IDs
+            setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, likedUserId]);
+        } catch (error) {
+            console.error('Error liking user:', error);
+        }
+    }
 
     const handleDislike = (userId: number) => {
         // Add the disliked user ID to the array of disliked user IDs
@@ -104,6 +123,7 @@ function MainPage({ params }: { params: { id: number } }) {
     } else {
         console.error('Invalid user ID in the route path.');
     }
+    
     if (filteredUsers.length === 0 && users.length > 0) {
         // Refetch user data to refill the card stack
         setLikedUserIds([]);
@@ -138,6 +158,13 @@ function MainPage({ params }: { params: { id: number } }) {
                         }}
                     />
                 ))}
+                {showMatchNotification && (
+                    <MatchNotification
+                        user1={matchedUser1}
+                        user2={matchedUser2}
+                        onClose={() => setShowMatchNotification(false)}
+                    />
+                )}
             </section>
         </div>
     );
