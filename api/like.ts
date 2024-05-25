@@ -1,6 +1,7 @@
 "use server"
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 export default async function like(userId: number, likedUserId: number) {
     try {
@@ -12,32 +13,32 @@ export default async function like(userId: number, likedUserId: number) {
             },
         });
 
+        const mutualLike = await prisma.like.findFirst({
+            where: {
+                userId: likedUserId,
+                likedUserId: userId,
+            },
+        });
+
         if (existingLike) {
             console.log('Like already exists for this user');
-            // Handle the case when a like already exists
-            return false;
+            return mutualLike ? true : false;
         } else {
             // Create a new like record if it doesn't exist
-            prisma.like.create({
+            await prisma.like.create({
                 data: {
                     userId: userId,
                     likedUserId: likedUserId,
                 },
             });
-            const mutualLike = await prisma.like.findFirst({
-                where: {
-                    userId: likedUserId,
-                    likedUserId: userId,
-                },
-            });
-            return mutualLike ? true : false;
-        }
-        console.log('Like created successfully');
 
+            console.log('Like created successfully');
+            return mutualLike ? true : false;
+
+        }
     } catch (error) {
         console.error('Error creating like:', error);
         // Handle the error appropriately
         throw error; // Rethrow the error or handle it in the caller
     }
 }
-

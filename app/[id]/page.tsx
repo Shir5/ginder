@@ -3,13 +3,9 @@
 import React, { useState, useEffect } from "react";
 import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
-import MainBtn from "@/components/ui/FormComponents/MainBtn";
 import logout from "@/api/logout";
-import { PrismaClient } from '@prisma/client';
 import like from "@/api/like";
 import MatchNotification from "@/components/MatchNotification";
-
-const prisma = new PrismaClient()
 
 // Define a type for user data
 interface User {
@@ -33,25 +29,28 @@ interface User {
  */
 function MainPage({ params }: { params: { id: number } }) {
     const [users, setUsers] = useState<User[]>([]); // Specify the type of users
-    const [likedUserIds, setLikedUserIds] = useState<number[]>(() => {
-        const likedIds = localStorage.getItem('likedUserIds');
-        return likedIds ? JSON.parse(likedIds) : [];
-    }); // Array of liked user IDs
-    const [dislikedUserIds, setDislikedUserIds] = useState<number[]>(() => {
-        const dislikedIds = localStorage.getItem('dislikedUserIds');
-        return dislikedIds ? JSON.parse(dislikedIds) : [];
-    }); // Array of disliked user IDs
-    const [reportedUserIds, setReportedUserIds] = useState<number[]>(() => {
-        const reportedIds = localStorage.getItem('reportedUserIds');
-        return reportedIds ? JSON.parse(reportedIds) : [];
-    }); // Array of reported user IDs
-
+    const [likedUserIds, setLikedUserIds] = useState<number[]>([]);
+    const [dislikedUserIds, setDislikedUserIds] = useState<number[]>([]);
+    const [reportedUserIds, setReportedUserIds] = useState<number[]>([]);
     const [showMatchNotification, setShowMatchNotification] = useState(false);
     const [matchedUser1, setMatchedUser1] = useState('');
     const [matchedUser2, setMatchedUser2] = useState('');
 
-    const userIdFromRoute = parseInt(window.location.pathname.split('/').pop() || ''); // Get the user ID from the URL`
-    let filteredUsers: User[] = [];
+    const [userIdFromRoute, setUserIdFromRoute] = useState<number | null>(null);
+
+    useEffect(() => {
+        const id = parseInt(window.location.pathname.split('/').pop() || '', 10);
+        setUserIdFromRoute(id);
+
+        const likedIds = localStorage.getItem('likedUserIds');
+        setLikedUserIds(likedIds ? JSON.parse(likedIds) : []);
+
+        const dislikedIds = localStorage.getItem('dislikedUserIds');
+        setDislikedUserIds(dislikedIds ? JSON.parse(dislikedIds) : []);
+
+        const reportedIds = localStorage.getItem('reportedUserIds');
+        setReportedUserIds(reportedIds ? JSON.parse(reportedIds) : []);
+    }, []);
 
     useEffect(() => {
         // Fetch user data using the function to fetch all users
@@ -111,6 +110,7 @@ function MainPage({ params }: { params: { id: number } }) {
         setReportedUserIds(prevReportedUserIds => [...prevReportedUserIds, userId]);
     };
 
+    let filteredUsers: User[] = [];
     if (userIdFromRoute) {
         filteredUsers = users.filter(user => {
             const userId = user.userId;
@@ -123,7 +123,7 @@ function MainPage({ params }: { params: { id: number } }) {
     } else {
         console.error('Invalid user ID in the route path.');
     }
-    
+
     if (filteredUsers.length === 0 && users.length > 0) {
         // Refetch user data to refill the card stack
         setLikedUserIds([]);
@@ -140,7 +140,7 @@ function MainPage({ params }: { params: { id: number } }) {
     return (
         <div>
             <section className="w-full h-screen bg-neutral-950 overflow-hidden justify-center items-center flex relative">
-                <button onClick={() => handleLogout()} className="absolute top-3  right-center bg-gray-800 text-white rounded-full h-20 w-20 flex items-center justify-center focus:outline-none transition-all duration-300 hover:bg-gray-600 hover:scale-110 hover:rotate-180">
+                <button onClick={() => handleLogout()} className="absolute top-3 right-center bg-gray-800 text-white rounded-full h-20 w-20 flex items-center justify-center focus:outline-none transition-all duration-300 hover:bg-gray-600 hover:scale-110 hover:rotate-180">
                     Logout
                 </button>
                 {filteredUsers.map((user, index) => (
@@ -151,7 +151,7 @@ function MainPage({ params }: { params: { id: number } }) {
                         cardTags={user.selectedTags.map(tag => tag.name)}
                         onDislike={() => handleDislike(user.userId)}
                         onReport={() => handleReport(user.userId)}
-                        onLike={() => handleLike(userIdFromRoute, user.userId)}
+                        onLike={() => handleLike(userIdFromRoute!, user.userId)}
                         style={{
                             zIndex: filteredUsers.length - index,
                             right: 1 / 5,
