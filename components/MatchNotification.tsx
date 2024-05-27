@@ -1,5 +1,4 @@
-"use client";
-import React from 'react';
+import React from "react";
 
 interface MatchNotificationProps {
     user1: string;
@@ -9,9 +8,10 @@ interface MatchNotificationProps {
 
 const MatchNotification: React.FC<MatchNotificationProps> = ({ user1, user2, onClose }) => {
     return (
-        <div className="fixed bottom-0 right-0 m-4 p-4 bg-green-500 text-white rounded-lg shadow-lg">
-            <p>Congratulations! {user1} and {user2} have matched!</p>
-            <button onClick={onClose} className="mt-2 bg-red-500 text-white p-1 rounded">
+        <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 bg-white p-4 rounded shadow-lg">
+            <h2 className="text-xl font-bold">It's a Match!</h2>
+            <p>{user1} and {user2}, you have a new match!</p>
+            <button onClick={onClose} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
                 Close
             </button>
         </div>

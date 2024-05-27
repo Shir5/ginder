@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { io } from "socket.io-client";
 import getAllUsers from "@/api/getAllUsers";
 import UserCard from "@/components/UserCard";
 import logout from "@/api/logout";
@@ -22,19 +23,17 @@ interface User {
     }[];
 }
 
-/**
- * Renders the main page component.
- *
- * @return {JSX.Element} The main page component.
- */
+// Initialize socket connection
+const socket = io('http://localhost:3000');
+
 function MainPage({ params }: { params: { id: number } }) {
-    const [users, setUsers] = useState<User[]>([]); // Specify the type of users
+    const [users, setUsers] = useState<User[]>([]);
     const [likedUserIds, setLikedUserIds] = useState<number[]>([]);
     const [dislikedUserIds, setDislikedUserIds] = useState<number[]>([]);
     const [reportedUserIds, setReportedUserIds] = useState<number[]>([]);
     const [showMatchNotification, setShowMatchNotification] = useState(false);
-    const [matchedUser1, setMatchedUser1] = useState('');
-    const [matchedUser2, setMatchedUser2] = useState('');
+    const [matchedUserQueue, setMatchedUserQueue] = useState<User[]>([]);
+    const [currentMatch, setCurrentMatch] = useState<{ user1: string; user2: string } | null>(null);
 
     const [userIdFromRoute, setUserIdFromRoute] = useState<number | null>(null);
 
@@ -53,7 +52,6 @@ function MainPage({ params }: { params: { id: number } }) {
     }, []);
 
     useEffect(() => {
-        // Fetch user data using the function to fetch all users
         const fetchData = async () => {
             try {
                 const userData = await getAllUsers();
@@ -65,6 +63,35 @@ function MainPage({ params }: { params: { id: number } }) {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (userIdFromRoute) {
+            socket.emit('join', userIdFromRoute);
+
+            socket.on('matches', (matchedUser: User) => {
+                setMatchedUserQueue(prevQueue => [...prevQueue, matchedUser]);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Socket disconnected');
+            });
+        }
+
+        return () => {
+            socket.off('matches');
+        };
+    }, [userIdFromRoute]);
+
+    useEffect(() => {
+        if (matchedUserQueue.length > 0 && !showMatchNotification) {
+            const matchedUser = matchedUserQueue[0];
+            const currentUser = users.find(user => user.userId === userIdFromRoute);
+            if (currentUser && userIdFromRoute !== null) {
+                setCurrentMatch({ user1: currentUser.username, user2: matchedUser.username });
+                setShowMatchNotification(true);
+            }
+        }
+    }, [matchedUserQueue, showMatchNotification, users, userIdFromRoute]);
 
     useEffect(() => {
         localStorage.setItem('likedUserIds', JSON.stringify(likedUserIds));
@@ -85,15 +112,11 @@ function MainPage({ params }: { params: { id: number } }) {
         try {
             const likeValue = await like(userId, likedUserId);
             if (likeValue) {
-                // Show match notification
                 const likedUser = users.find(user => user.userId === likedUserId);
                 if (likedUser) {
-                    setMatchedUser1(users.find(user => user.userId === userId)?.username || '');
-                    setMatchedUser2(likedUser.username);
-                    setShowMatchNotification(true);
+                    setMatchedUserQueue(prevQueue => [...prevQueue, likedUser]);
                 }
             }
-            // Add the liked user ID to the array of liked user IDs
             setLikedUserIds(prevLikedUserIds => [...prevLikedUserIds, likedUserId]);
         } catch (error) {
             console.error('Error liking user:', error);
@@ -101,12 +124,10 @@ function MainPage({ params }: { params: { id: number } }) {
     }
 
     const handleDislike = (userId: number) => {
-        // Add the disliked user ID to the array of disliked user IDs
         setDislikedUserIds(prevDislikedUserIds => [...prevDislikedUserIds, userId]);
     };
 
     const handleReport = (userId: number) => {
-        // Add the reported user ID to the array of reported user IDs
         setReportedUserIds(prevReportedUserIds => [...prevReportedUserIds, userId]);
     };
 
@@ -114,7 +135,6 @@ function MainPage({ params }: { params: { id: number } }) {
     if (userIdFromRoute) {
         filteredUsers = users.filter(user => {
             const userId = user.userId;
-            // Filter out if the user ID matches the ID from the route path
             return userId !== userIdFromRoute &&
                 !likedUserIds.includes(userId) &&
                 !dislikedUserIds.includes(userId) &&
@@ -125,7 +145,6 @@ function MainPage({ params }: { params: { id: number } }) {
     }
 
     if (filteredUsers.length === 0 && users.length > 0) {
-        // Refetch user data to refill the card stack
         setLikedUserIds([]);
         setDislikedUserIds([]);
         setReportedUserIds([]);
@@ -158,11 +177,15 @@ function MainPage({ params }: { params: { id: number } }) {
                         }}
                     />
                 ))}
-                {showMatchNotification && (
+                {showMatchNotification && currentMatch && (
                     <MatchNotification
-                        user1={matchedUser1}
-                        user2={matchedUser2}
-                        onClose={() => setShowMatchNotification(false)}
+                        user1={currentMatch.user1}
+                        user2={currentMatch.user2}
+                        onClose={() => {
+                            setMatchedUserQueue(prevQueue => prevQueue.slice(1));
+                            setShowMatchNotification(false);
+                            setCurrentMatch(null);
+                        }}
                     />
                 )}
             </section>
