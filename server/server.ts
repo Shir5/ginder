@@ -16,8 +16,8 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('join', async (userId) => {
-        socket.join(userId);
+    socket.on('join', async (userId: number) => {
+        socket.join(userId.toString()); // Convert userId to string
         console.log(`User with ID ${userId} joined room ${userId}`);
 
         const checkForMatches = async () => {
@@ -36,9 +36,12 @@ io.on('connection', (socket) => {
                 select: { user: true },
             });
 
-            if (matches.length > 0) {
-                socket.emit('matches', matches.map(match => match.user));
-            }
+            matches.forEach((match) => {
+                const matchedUserId = match.user.userId;
+                // Notify both users about the match
+                io.to(userId.toString()).emit('matches', match.user); // Convert userId to string
+                io.to(matchedUserId.toString()).emit('matches', match.user); // Convert matchedUserId to string
+            });
         };
 
         checkForMatches();

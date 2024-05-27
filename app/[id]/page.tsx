@@ -65,7 +65,7 @@ function MainPage({ params }: { params: { id: number } }) {
     }, []);
 
     useEffect(() => {
-        if (userIdFromRoute) {
+        if (userIdFromRoute !== null) {
             socket.emit('join', userIdFromRoute);
 
             socket.on('matches', (matchedUser: User) => {
