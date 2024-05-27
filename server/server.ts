@@ -13,12 +13,24 @@ const io = new Server(server, {
     },
 });
 
+// In-memory store for unmatched notifications
+const unmatchedNotifications: { [key: number]: any[] } = {};
+
 io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on('join', async (userId: number) => {
-        socket.join(userId.toString()); // Convert userId to string
+        const userIdStr = userId.toString();
+        socket.join(userIdStr);
         console.log(`User with ID ${userId} joined room ${userId}`);
+
+        // Check and send any unmatched notifications
+        if (unmatchedNotifications[userId]) {
+            unmatchedNotifications[userId].forEach((notification) => {
+                socket.emit('matches', notification);
+            });
+            delete unmatchedNotifications[userId];
+        }
 
         const checkForMatches = async () => {
             const likedUsers = await prisma.like.findMany({
@@ -38,9 +50,18 @@ io.on('connection', (socket) => {
 
             matches.forEach((match) => {
                 const matchedUserId = match.user.userId;
+                const matchedUserIdStr = matchedUserId.toString();
                 // Notify both users about the match
-                io.to(userId.toString()).emit('matches', match.user); // Convert userId to string
-                io.to(matchedUserId.toString()).emit('matches', match.user); // Convert matchedUserId to string
+                io.to(userIdStr).emit('matches', match.user);
+                io.to(matchedUserIdStr).emit('matches', match.user);
+
+                // Store notification if user is not connected
+                if (!io.sockets.adapter.rooms.has(matchedUserIdStr)) {
+                    if (!unmatchedNotifications[matchedUserId]) {
+                        unmatchedNotifications[matchedUserId] = [];
+                    }
+                    unmatchedNotifications[matchedUserId].push(match.user);
+                }
             });
         };
 
